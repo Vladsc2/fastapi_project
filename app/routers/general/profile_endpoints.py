@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Query, Depends, Request, HTTPException, status
 from fastapi.responses import HTMLResponse
-from pip._internal.utils import retry
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db_interface import db_interface
 from app.html_system import wrapper, form_error_text
