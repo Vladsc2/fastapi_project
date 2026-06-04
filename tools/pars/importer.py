@@ -75,7 +75,7 @@ async def _abs_path_to_dotted(abs_path: str) -> str:
         )
 
     # Берём всё, начиная с game_data, и отрезаем расширение .py
-    relevant = parts[idx:]                     # ['game_data', 'raids_data', ..., 'one_base_goblin.py']
+    relevant = parts[idx:]
     relevant[-1] = os.path.splitext(relevant[-1])[0]  # убираем .py у последнего элемента
     dotted = ".".join(relevant)
     return dotted
