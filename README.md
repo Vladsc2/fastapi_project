@@ -2,7 +2,7 @@
 
 **⚠️ Work in progress.** This is a pet project under active development. The game is not yet fully playable — mechanics are being implemented gradually.
 
-A small text-based browser game with D&D mechanics built with **FastAPI**, SQLAlchemy, and Alembic.
+A small text-based browser game with D&D mechanics
 
 ## Requirements
 - Python 3.12+
