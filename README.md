@@ -20,11 +20,11 @@ A small text-based browser game with D&D mechanics built with **FastAPI**, SQLAl
 ```
 
 4. **Activate the virtual environment**:
-   # On Windows:
+On Windows:
 ```
    .venv\Scripts\activate
 ```
-   # On Unix/MacOS:
+On Unix/MacOS:
 ```
    source .venv/bin/activate
 ```
