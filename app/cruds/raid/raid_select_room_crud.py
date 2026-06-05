@@ -13,6 +13,9 @@ from app.schemas.room import RoomMeshSchema
 
 from game_data import const
 from game_data.templates.room import RoomGS
+from game_data.templates.entity import BaseEntityGS
+
+from app.game_systems.character import entity_effects
 
 
 """
@@ -81,6 +84,7 @@ async def _select_room(
     if room_schema.room_type == const.RoomTypes.BATTLE and room_instance is not None:
         enemies = await room_creator.form_enemies(room_instance)
         await _append_enemies(
+            room_gs=room_instance,
             room_model=game_model.room,
             enemies=enemies,
             session=session,
@@ -100,6 +104,7 @@ async def _select_room(
 
 
 async def _append_enemies(
+        room_gs: RoomGS,
         room_model: RoomModel,
         enemies: list[MobModel | list[MobModel]],
         session: AsyncSession
@@ -133,6 +138,43 @@ async def _append_enemies(
             enemies_id.append( mob_model.id )
 
 
-
     room_model.enemies = enemies_id
+
+    await _init_effects_on_entities(
+        room_gs=room_gs,
+        room_model=room_model,
+        enemies=enemies,
+        is_list=is_list,
+    )
+
     await session.commit()
+
+
+async def _init_effects_on_entities(
+        room_gs: RoomGS,
+        room_model: RoomModel,
+        enemies: list[MobModel | list[MobModel]],
+        is_list: bool,
+):
+    if is_list:
+        for model_list, game_schema_list in zip( enemies, room_gs.enemies ):
+            for mob_model, entity_gs in zip( model_list, game_schema_list ):
+                await _init_effect_on_entity(mob_model, entity_gs)
+
+    else:
+        for mob_model, entity_gs in zip( enemies, room_gs.enemies ):
+            await _init_effect_on_entity(mob_model, entity_gs)
+
+
+
+async def _init_effect_on_entity(
+        mob_model: MobModel,
+        entity_gs: BaseEntityGS,
+):
+    entity_gs_instance = entity_gs()
+    for effect_app in entity_gs_instance.effects:
+        await entity_effects.add_effect(
+            entity=mob_model,
+            caster_id=mob_model.id,
+            effect_app=effect_app,
+        )

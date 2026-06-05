@@ -53,10 +53,10 @@ async def _add_effect_handle(entity: BaseCharacterModel, caster_id: int | None, 
     )
 
     if effect_schema.effect_type == BaseEffect.Type.TICK_EFFECT:
-        return await _add_tick_effect(entity, effect_schema, effect)
+        return await _add_tick_effect(entity, effect_schema, effect_app, effect)
 
     if effect_schema.effect_type == BaseEffect.Type.STAT_MODIFIER:
-        return await _add_stat_effect(entity, effect_schema, effect)
+        return await _add_stat_effect(entity, effect_schema, effect_app, effect)
 
 
     return (f"Необработанный тип эффекта для добавления на character\n\n"
@@ -68,6 +68,7 @@ async def _add_effect_handle(entity: BaseCharacterModel, caster_id: int | None, 
 async def _add_tick_effect(
         entity: BaseCharacterModel,
         add_effect_schema: EffectSchema,
+        effect_app: EffectApplication,
         effect: TickEffect
 ) -> str:
     # Проверка, нет ли эффекта с такой же или большей продолжительностью на цели
@@ -77,26 +78,12 @@ async def _add_tick_effect(
 
 
     text = f"Накладывание эффекта '{effect.name}'\n"
-    # Спасбросок, если нужно
-    if effect.save_throw_stat is not None:
-        text += f"  Спасбросок {const_modifier.get_readable_genitive_stat(effect.save_throw_stat).lower()}\n"
-        text += f"  Сложность: {effect.save_throw_diff}\n"
-        roll_value = roll20()
-        modifier = char_stat.get_stat_modifier(entity, effect.save_throw_stat)
-        text += f"  Значение броска: {roll_value}\n"
-        save_throw_value = roll_value + modifier
-        if modifier != 0:
-            text += f"  Модификатор характеристики: {modifier}\n"
-            if save_throw_value >= effect.save_throw_diff:
-                text += f"  {roll_value} + {modifier} = {save_throw_value}  >  {effect.save_throw_diff}\n"
-            else:
-                text += f"  {roll_value} + {modifier} = {save_throw_value}  <  {effect.save_throw_diff}\n"
 
-        if save_throw_value >= effect.save_throw_diff:
-            text += f"  Спасбросок успешен\n"
-            return text
-        else:
-            text += f"  Спасбросок провален\n"
+    # savethrow
+    add_effect_flag, additional_text = await _check_save_throw(entity, effect, effect_app)
+    text += additional_text
+    if not add_effect_flag:
+        return text
 
     await _add_effect_to_entity(
         entity=entity,
@@ -115,6 +102,7 @@ async def _add_tick_effect(
 async def _add_stat_effect(
         entity: BaseCharacterModel,
         add_effect_schema: EffectSchema,
+        effect_app: EffectApplication,
         effect: StatModifierEffect
 ) -> str:
     # Проверка, нет ли эффекта с такой же или большей продолжительностью на цели
@@ -122,6 +110,13 @@ async def _add_stat_effect(
     view_stat_effect = get_stat_modifier_effect_view(effect, add_effect_schema)
     if not await _check_add_possibility(effects, add_effect_schema, effect):
         return f"Эффект '{view_stat_effect}' большей или такой же продолжительности уже наложен на цель\n\n"
+
+    text = f"Накладывание эффекта '{view_stat_effect}'\n"
+    # savethrow
+    add_effect_flag, additional_text = await _check_save_throw(entity, effect, effect_app)
+    text += additional_text
+    if not add_effect_flag:
+        return text
 
     await _add_effect_to_entity(
         entity=entity,
@@ -134,6 +129,36 @@ async def _add_stat_effect(
             f" наложен на {entity.name},"
             f" на {add_effect_schema.times} {form.get_genitive_turn_word(add_effect_schema.times)}\n\n")
 
+
+
+async def _check_save_throw(
+        entity: BaseCharacterModel,
+        effect: type[BaseEffect],
+        effect_app: EffectApplication,
+) -> tuple[bool, str]:
+    text = ""
+    # Спасбросок, если нужно
+    if (effect.save_throw_stat is not None) and (not effect_app.ignore_save_throw):
+        text += f"  Спасбросок {const_modifier.get_readable_genitive_stat(effect.save_throw_stat).lower()}\n"
+        text += f"  Сложность: {effect.save_throw_diff}\n"
+        roll_value = roll20()
+        modifier = char_stat.get_stat_modifier(entity, effect.save_throw_stat)
+        text += f"  Значение броска: {roll_value}\n"
+        save_throw_value = roll_value + modifier
+        if modifier != 0:
+            text += f"  Модификатор характеристики: {modifier}\n"
+            if save_throw_value >= effect.save_throw_diff:
+                text += f"  {roll_value} + {modifier} = {save_throw_value}  >  {effect.save_throw_diff}\n"
+            else:
+                text += f"  {roll_value} + {modifier} = {save_throw_value}  <  {effect.save_throw_diff}\n"
+
+        if save_throw_value >= effect.save_throw_diff:
+            text += f"  Спасбросок успешен\n"
+            return False, text
+        else:
+            text += f"  Спасбросок провален\n"
+
+    return True, text
 
 
 

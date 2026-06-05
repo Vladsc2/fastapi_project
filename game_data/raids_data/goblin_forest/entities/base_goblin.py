@@ -1,5 +1,6 @@
 from game_data.templates.entity import BaseEntityGS
-from dataclasses import dataclass
+from game_data.templates.effect import EffectApplication
+from dataclasses import dataclass, field
 
 @dataclass
 class BaseGoblin( BaseEntityGS ):
@@ -9,4 +10,10 @@ class BaseGoblin( BaseEntityGS ):
     min_hp = 6
     max_hp = 9
 
-    weapon_id = 1
+    effects: list = field(default_factory=lambda: [
+        EffectApplication(
+            url="effect/tick/poison",
+            time=5,
+            ignore_save_throw=True
+        )
+    ])

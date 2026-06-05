@@ -2,6 +2,7 @@ from app.models.room import RoomModel
 from app.models.game import MobModel
 from app.schemas.room import RoomMeshSchema
 from game_data.templates.room import RoomGS
+from game_data.templates.entity import BaseEntityGS
 from tools.pars import importer
 from random import randint
 
@@ -48,7 +49,7 @@ async def _form_enemies(room_instance: RoomGS) -> list[MobModel | list[MobModel]
     return enemies
 
 
-async def _add_entity(list_to_append: list[MobModel], entity):
+async def _add_entity(list_to_append: list[MobModel], entity: BaseEntityGS):
     mob_model = MobModel(
         name=entity.name,
         desc=entity.description,

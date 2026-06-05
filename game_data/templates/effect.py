@@ -8,6 +8,8 @@ class EffectApplication():
     url: str
     time: int
 
+    ignore_save_throw: bool = False
+
     value_1: int = 0
     value_2: int = 0
     value_3: int = 0
@@ -88,6 +90,10 @@ class BaseEffect():
     updatable: bool = False
     alignment: str
 
+    # const.Stat
+    save_throw_stat: str | None = None
+    save_throw_diff: int = 10
+
 
 
 
@@ -104,9 +110,6 @@ class TickEffect( BaseEffect ):
     name: str
     desc: str
 
-    # const.Stat
-    save_throw_stat: str | None = None
-    save_throw_diff: int = 10
     alignment: str = BaseEffect.Alignment.NEUTRAL
 
     def tick(self) -> str:
@@ -122,10 +125,9 @@ class StatModifierEffect( BaseEffect ):
     # id: str
     event: str = const.Event.END_TURN
     # updatable: bool = False
-    # alignment: str = BaseEffect.Alignment.NEUTRAL
+    alignment: str = BaseEffect.Alignment.NEUTRAL
 
     # -> dict[const.Stat, modifier]
-    stats: dict[str, int]
     @staticmethod
     def get_stats_modifiers(
             value_1: int,

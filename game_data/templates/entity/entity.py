@@ -32,6 +32,7 @@ class BaseEntityGS():
     stat_intelligence: int = 7
     stat_will: int = 7
 
+    # list[EffectApplication]
     effects: list = field(default_factory=list)
 
     weapon_url: str = ""
