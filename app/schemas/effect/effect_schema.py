@@ -9,3 +9,7 @@ class EffectSchema( BaseSchema ):
     times: int
     caster_id: int | None    # Если None, то владелец - игрок
     effect_url: str
+    value_1: int
+    value_2: int
+    value_3: int
+    value_4: int

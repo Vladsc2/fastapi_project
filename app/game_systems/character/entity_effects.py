@@ -45,6 +45,10 @@ async def _add_effect_handle(entity: BaseCharacterModel, caster_id: int | None, 
         times=effect_app.time,
         caster_id=caster_id,
         effect_url=effect_app.url,
+        value_1=effect_app.value_1,
+        value_2=effect_app.value_2,
+        value_3=effect_app.value_3,
+        value_4=effect_app.value_4,
     )
 
     if effect_schema.effect_type == BaseEffect.Type.TICK_EFFECT:
@@ -153,6 +157,10 @@ async def _apply_effects_on_entity(game_model: GameModel, entity: MobModel, even
             player_char=game_model.character,
             caster=caster,
             target=entity,
+            value_1=effect_schema.value_1,
+            value_2=effect_schema.value_2,
+            value_3=effect_schema.value_3,
+            value_4=effect_schema.value_4,
         )
 
         # Применяем эффект

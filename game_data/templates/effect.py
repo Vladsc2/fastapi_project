@@ -7,6 +7,11 @@ class EffectApplication():
     url: str
     time: int
 
+    value_1: int = 0
+    value_2: int = 0
+    value_3: int = 0
+    value_4: int = 0
+
 
 
 class BaseEffect():
@@ -23,6 +28,10 @@ class BaseEffect():
             player_char,
             caster,
             target,
+            value_1,
+            value_2,
+            value_3,
+            value_4,
     ):
         self._meta = {
             self.Meta.GAME_MODEL: game_model,
@@ -30,6 +39,10 @@ class BaseEffect():
             self.Meta.PLAYER_CHAR: player_char,
             self.Meta.CASTER: caster,
             self.Meta.TARGET: target,
+            self.Meta.VALUE_1: value_1,
+            self.Meta.VALUE_2: value_2,
+            self.Meta.VALUE_3: value_3,
+            self.Meta.VALUE_4: value_4,
         }
 
 
@@ -51,6 +64,11 @@ class BaseEffect():
         PLAYER_CHAR = 2
         CASTER = 3
         TARGET = 4
+
+        VALUE_1 = 5
+        VALUE_2 = 6
+        VALUE_3 = 7
+        VALUE_4 = 8
 
 
     # interface
@@ -96,12 +114,20 @@ class StatModifierEffect( BaseEffect ):
 
     # override
     # id: str
-    # event: str = const.Event.START_TURN
+    event: str = const.Event.END_TURN
     # updatable: bool = False
     # alignment: str = BaseEffect.Alignment.NEUTRAL
 
-    # dict[const.Stat, modifier]
+    # -> dict[const.Stat, modifier]
     stats: dict[str, int]
+    def get_stats_modifiers(
+            self,
+            value_1: int,
+            value_2: int,
+            value_3: int,
+            value_4: int,
+    ) -> dict[str, int]:
+        return {}
 
 
 
