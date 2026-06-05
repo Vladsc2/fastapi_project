@@ -34,6 +34,7 @@ async def apply_effects_on_entity(game_model: GameModel, entity: MobModel, event
 """
 
 async def _add_effect_handle(entity: BaseCharacterModel, caster_id: int | None, effect_app: EffectApplication) -> str:
+    # Не effect_instance, потому что нужны только поля
     effect = effect_system.get_effect_by_url(effect_app.url)
     if effect is None:
         print(f"Add Effect Error: Не удалось получить эффект с url {effect_app.url}")
@@ -118,8 +119,9 @@ async def _add_stat_effect(
 ) -> str:
     # Проверка, нет ли эффекта с такой же или большей продолжительностью на цели
     effects = await _get_effects(entity)
+    view_stat_effect = get_stat_modifier_effect_view(effect, add_effect_schema)
     if not await _check_add_possibility(effects, add_effect_schema, effect):
-        return f"Эффект '{get_stat_modifier_effect_view(effect)}' большей или такой же продолжительности уже наложен на цель\n\n"
+        return f"Эффект '{view_stat_effect}' большей или такой же продолжительности уже наложен на цель\n\n"
 
     await _add_effect_to_entity(
         entity=entity,
@@ -128,7 +130,7 @@ async def _add_stat_effect(
         effect=effect
     )
 
-    return (f"Эффект модификации характеристики '{get_stat_modifier_effect_view(effect)}'"
+    return (f"Эффект модификации характеристики '{view_stat_effect}'"
             f" наложен на {entity.name},"
             f" на {add_effect_schema.times} {form.get_genitive_turn_word(add_effect_schema.times)}\n\n")
 
@@ -149,18 +151,12 @@ async def _apply_effects_on_entity(game_model: GameModel, entity: MobModel, even
         else:
             caster = entity
 
-        effect_cls: type[BaseEffect] = effect_system.get_effect_by_url( effect_schema.effect_url )
-        effect: BaseEffect = effect_cls()
-        effect._form_effect_meta(
-            game_model=game_model,
-            room_model=game_model.room,
-            player_char=game_model.character,
+        effect: BaseEffect = effect_system.get_effect_instance(
+            url=effect_schema.effect_url,
             caster=caster,
             target=entity,
-            value_1=effect_schema.value_1,
-            value_2=effect_schema.value_2,
-            value_3=effect_schema.value_3,
-            value_4=effect_schema.value_4,
+            game_model=game_model,
+            effect_schema=effect_schema,
         )
 
         # Применяем эффект

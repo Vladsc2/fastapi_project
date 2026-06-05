@@ -13,7 +13,7 @@ class GodKiller( WeaponItem ):
     slot = const.WeaponConst.Slot.CLOSE
 
     costs = {
-        const.Cost.ACTION: 1,
+        const.Cost.ACTION: 0,
     }
 
     damages = [

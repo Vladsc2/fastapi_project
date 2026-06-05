@@ -22,10 +22,4 @@ class OneBaseGoblinRoom( BattleRoom ):
         [
             Enemy
         ],
-        [
-            Enemy
-        ],
-        [
-            Enemy
-        ]
     ])

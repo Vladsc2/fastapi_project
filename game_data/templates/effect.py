@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from game_data.const import const_modifier
 from game_data import const
+from app.schemas.effect import EffectSchema
 
 @dataclass
 class EffectApplication():
@@ -46,6 +47,11 @@ class BaseEffect():
         }
 
 
+    # override
+    def view(self, value_1: int, value_2: int, value_3: int, value_4: int) -> str:
+        return ""
+
+
     # const
     class Type:
         TICK_EFFECT = "Tick"
@@ -72,8 +78,8 @@ class BaseEffect():
 
 
     # interface
-    def meta(self, const: int, default=None):
-        return self._meta.get(const, default)
+    def meta(self, meta_const: int, default=None):
+        return self._meta.get(meta_const, default)
 
 
     # override
@@ -120,8 +126,8 @@ class StatModifierEffect( BaseEffect ):
 
     # -> dict[const.Stat, modifier]
     stats: dict[str, int]
+    @staticmethod
     def get_stats_modifiers(
-            self,
             value_1: int,
             value_2: int,
             value_3: int,
@@ -131,9 +137,18 @@ class StatModifierEffect( BaseEffect ):
 
 
 
-def get_stat_modifier_effect_view(effect: type[StatModifierEffect]) -> str:
+def get_stat_modifier_effect_view(
+        effect: type[StatModifierEffect],
+        effect_schema: EffectSchema
+) -> str:
     text = ""
-    for stat_const, stat_value in effect.stats.items():
+    stat_dict = effect.get_stats_modifiers(
+            value_1=effect_schema.value_1,
+            value_2=effect_schema.value_2,
+            value_3=effect_schema.value_3,
+            value_4=effect_schema.value_4
+        )
+    for stat_const, stat_value in stat_dict.items():
         text += f"{const_modifier.get_readable_stat(stat_const)} "
         if stat_value > 0:
             text += "+"

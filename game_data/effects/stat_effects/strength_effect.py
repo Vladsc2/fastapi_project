@@ -6,8 +6,8 @@ class StrengthModifierEffect( StatModifierEffect ):
     updatable = False
     alignment = BaseEffect.Alignment.NEGATIVE
 
+    @staticmethod
     def get_stats_modifiers(
-            self,
             value_1: int,
             value_2: int,
             value_3: int,

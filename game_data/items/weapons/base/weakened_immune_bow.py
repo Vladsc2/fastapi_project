@@ -29,6 +29,7 @@ class BaseSword( WeaponItem ):
     modifiers = [ const.Stat.Dexterity ]
 
     effects = [ EffectApplication(
-        url="effect/stat/constitution-m4-u",
+        url="effect/stat/constitution",
         time=4,
+        value_1=-4,
     ) ]

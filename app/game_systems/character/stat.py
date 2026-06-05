@@ -43,7 +43,13 @@ def _update_stat_value_from_effects(
             continue
 
         effect: StatModifierEffect = effect_system.get_effect_by_url(effect_schema.effect_url)
-        for stat_const, stat_modifier in effect.stats.items():
+        stat_dict = effect.get_stats_modifiers(
+            value_1=effect_schema.value_1,
+            value_2=effect_schema.value_2,
+            value_3=effect_schema.value_3,
+            value_4=effect_schema.value_4
+        )
+        for stat_const, stat_modifier in stat_dict.items():
             if stat != stat_const:
                 continue
             stat_value += stat_modifier

@@ -118,7 +118,6 @@ async def _handle_state(
 
     if room_model.state == const.RoomStates.General.TEXT:
         next_state = await _get_state_after_text(room_model)
-        print(f"next_state: {next_state}")
         return await room_text.get_room_text_and_update(
             game_model=game_model,
             room_model=room_model,
