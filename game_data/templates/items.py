@@ -14,12 +14,18 @@ class BaseItem():
     sell_price: int = 1
     buy_price: int = 5
 
+    can_be_sold: bool = True
+
 
 
 
 class JunkItem(BaseItem):
     _category = BaseItem._category + "/junk"
 
+
+class CoinItem(BaseItem):
+    _category = BaseItem._category + "/coin"
+    can_be_sold = False
 
 
 class WeaponItem(BaseItem):

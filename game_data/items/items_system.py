@@ -1,4 +1,5 @@
 from game_data.templates.items import BaseItem
+import game_data.items.coins
 import game_data.items.equipments
 import game_data.items.junk
 import game_data.items.usable
