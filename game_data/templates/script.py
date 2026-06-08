@@ -33,6 +33,10 @@ class BaseScript():
         pass
 
 
+    def close_battle_trigger(self):
+        pass
+
+
 
 class SystemScript( BaseScript ):
     _category = BaseScript._category + "/system"

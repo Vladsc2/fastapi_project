@@ -52,6 +52,9 @@ class MobModel( BaseCharacterModel ):
     weapon_url: Mapped[str] = mapped_column(default="")
     armor_url: Mapped[str] = mapped_column(default="")
 
+    exp: Mapped[float] = mapped_column(default=0)
+    loot: Mapped[list] = mapped_column(JSON, default=list)
+
 
 
 class MainCharacterModel( BaseCharacterModel ):

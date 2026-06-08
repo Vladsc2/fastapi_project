@@ -1,6 +1,20 @@
 from dataclasses import dataclass, field
 
 @dataclass
+class DropSpec():
+    url: str
+    quantity: int
+    chance: float
+
+    # Если True:
+    #    Пройтись по range(quantity) и определить выпадение каждого отдельного предмета по шансу chance (0-quantity)
+    # Если False:
+    #    Определить выпадение всех предметов разом (то есть с шансом `chance` выпадет либо `quantity` предметов, либо 0)
+    single_mode: bool = False
+
+
+
+@dataclass
 class BaseEntityGS():
     name: str = "Entity"
     description: str = ""
@@ -37,4 +51,6 @@ class BaseEntityGS():
 
     weapon_url: str = ""
 
-
+    # list[DropSpec]
+    exp: float = 0
+    loot: list = field(default_factory=list)

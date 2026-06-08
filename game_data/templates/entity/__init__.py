@@ -1,2 +1,2 @@
 
-from .entity import BaseEntityGS
+from .entity import BaseEntityGS, DropSpec

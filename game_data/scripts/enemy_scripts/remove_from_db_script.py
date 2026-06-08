@@ -8,7 +8,7 @@ class RemoveFromDBScript( EnemyScript ):
 
     id = "remove_db"
 
-    def death_trigger(self):
+    def close_battle_trigger(self):
         entity: MobModel = self.get_meta( self.META_ENTITY )
         entity._delete_label = True
 
