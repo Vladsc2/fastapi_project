@@ -12,7 +12,7 @@ from app.game_systems.battle.battle_system import enemies_turn
 from app.game_systems.battle.battle_system import player_turn
 from app.game_systems.battle.attack.player import player_close_attack
 from app.game_systems.battle.attack.player import player_range_attack
-from app.game_systems.room.enter_leave import leave_room
+from app.game_systems.room.leave import leave_room
 
 
 """

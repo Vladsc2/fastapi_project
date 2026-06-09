@@ -8,9 +8,9 @@ from app.models.raid import RaidModel
 from app.models.room import RoomModel
 
 from app.cruds.game import game_crud
-from app.game_systems.room.enter_leave import room_creator
-from app.game_systems.room.enter_leave import mob_creator
-from app.game_systems.room.enter_leave import mob_initer
+from app.game_systems.room.init import room_creator
+from app.game_systems.room.init import mob_creator
+from app.game_systems.room.init import mob_initer
 from app.schemas.room import RoomMeshSchema
 
 from game_data import const
