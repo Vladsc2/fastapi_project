@@ -6,7 +6,7 @@ from game_data import const
 
 from app.game_systems.room.tools import state_manager
 
-from app.game_systems.room.abstract_actions import room_text
+from app.game_systems.room.room_actions import room_text_action
 from app.game_systems.battle.battle_starter import battle_starter
 from app.game_systems.battle.battle_system import enemies_turn
 from app.game_systems.battle.battle_system import player_turn
@@ -19,12 +19,12 @@ from app.game_systems.room.leave import leave_room
     Interfaces
 """
 
-async def apply_next_state(
+async def home_room_handle(
         game_model: GameModel,
         room_model: RoomModel,
         enemies: list[MobModel],
 ) -> str:
-    string = await _handle_state(game_model, room_model, enemies)
+    string = await _home_room_handle(game_model, room_model, enemies)
 
     return string
 
@@ -106,7 +106,7 @@ async def range_attack(
 """
 
 
-async def _handle_state(
+async def _home_room_handle(
         game_model: GameModel,
         room_model: RoomModel,
         enemies: list[MobModel],
@@ -118,7 +118,7 @@ async def _handle_state(
 
     if room_model.state == const.RoomStates.General.TEXT:
         next_state = await _get_state_after_text(room_model)
-        return await room_text.get_room_text_and_update(
+        return await room_text_action.get_room_text_and_update(
             game_model=game_model,
             room_model=room_model,
             next_state_if_no_text=next_state,
@@ -161,8 +161,9 @@ async def _handle_state(
         return await leave_room.leave_room(game_model)
 
 
-    return (f"State '{room_model.state}' не обрабатывается.\n"
-            f" app/game_system/room/room_actions/battle_room_actions.py'  func:_handle_state")
+    return (f"State '{room_model.state}' не обрабатывается.\n\n"
+            f" file: {__file__}\n"
+            f"  func:_handle_state")
 
 
 
@@ -171,7 +172,7 @@ async def _handle_end_of_battle(
         game_model: GameModel,
         room_model: RoomModel,
 ):
-    is_string = room_text.unsafe_check_is_string(room_model)
+    is_string = room_text_action.unsafe_check_is_string(room_model)
 
     if is_string:
         room_model.state = const.RoomStates.General.LEAVE

@@ -8,7 +8,7 @@ from app.models.game import GameModel, MobModel
 from app.models.room import RoomModel
 
 from app.cruds.room import room_attached_models_crud
-from app.game_systems.room.room_actions import battle_room_actions
+from app.game_systems.room.room_handler import handler
 from app.game_systems.room.tools import state_manager
 
 from game_data import const
@@ -28,7 +28,7 @@ async def room_home_action(
         session=session,
     )
 
-    string: str = await battle_room_actions.apply_next_state(
+    string: str = await handler.home_room_handle(
         game_model=game_model,
         room_model=game_model.room,
         enemies=enemies,
@@ -51,7 +51,7 @@ async def end_player_turn(
         session=session,
     )
 
-    string = await battle_room_actions.end_player_turn(game_model, enemies)
+    string = await handler.end_player_turn(game_model, enemies)
     await _commit_session(enemies, session)
 
     return string
@@ -68,7 +68,7 @@ async def close_attack_to_select_target(
 
     weapon: WeaponItem = await room_attached_models_crud.get_close_weapon(game_model, session)
 
-    string: str = await battle_room_actions.close_attack_to_select_target(
+    string: str = await handler.close_attack_to_select_target(
         game_model=game_model,
         room_model=game_model.room,
         enemies=enemies,
@@ -91,7 +91,7 @@ async def close_attack(
 
     weapon: WeaponItem = await room_attached_models_crud.get_close_weapon(game_model, session)
 
-    string: str = await battle_room_actions.close_attack(
+    string: str = await handler.close_attack(
         game_model=game_model,
         room_model=game_model.room,
         enemies=enemies,
@@ -114,7 +114,7 @@ async def range_attack_to_select_target(
 
     weapon: WeaponItem | None = await room_attached_models_crud.get_range_weapon(game_model, session)
 
-    string: str = await battle_room_actions.range_attack_to_select_target(
+    string: str = await handler.range_attack_to_select_target(
         game_model=game_model,
         room_model=game_model.room,
         enemies=enemies,
@@ -137,7 +137,7 @@ async def range_attack(
 
     weapon: WeaponItem | None = await room_attached_models_crud.get_range_weapon(game_model, session)
 
-    string: str = await battle_room_actions.range_attack(
+    string: str = await handler.range_attack(
         game_model=game_model,
         room_model=game_model.room,
         enemies=enemies,
