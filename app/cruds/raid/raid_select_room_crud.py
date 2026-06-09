@@ -9,13 +9,13 @@ from app.models.room import RoomModel
 
 from app.cruds.game import game_crud
 from app.game_systems.room.enter_leave import room_creator
+from app.game_systems.room.enter_leave import mob_creator
+from app.game_systems.room.enter_leave import mob_initer
 from app.schemas.room import RoomMeshSchema
 
 from game_data import const
 from game_data.templates.room import RoomGS
 from game_data.templates.entity import BaseEntityGS
-
-from app.game_systems.character import entity_effects
 
 
 """
@@ -74,22 +74,16 @@ async def _select_room(
         room_schema: RoomMeshSchema,
         session: AsyncSession,
 ) -> RoomModel:
-    room_instance: RoomGS | None = await room_creator.update_room_model(
+    # Получаем room_gs (instance), и обновляем room_model согласно room_gs
+    room_gs: RoomGS | None = await room_creator.update_room_model(
         room_model=game_model.room,
         room_schema=room_schema,
     )
+
+    # В зависимости от типа локации, используем дополнительные действия
+    if room_schema.room_type == const.RoomTypes.BATTLE and room_gs is not None:
+        await _form_mob_models(game_model, room_gs, session)
     await session.commit()
-
-
-    if room_schema.room_type == const.RoomTypes.BATTLE and room_instance is not None:
-        enemies = await room_creator.form_enemies(room_instance)
-        await _append_enemies(
-            room_gs=room_instance,
-            room_model=game_model.room,
-            enemies=enemies,
-            session=session,
-        )
-
 
     await game_crud.set_major_state_game_model(
         game_model=game_model,
@@ -97,22 +91,42 @@ async def _select_room(
         session=session
     )
 
-    await session.commit()
 
 
 
+async def _form_mob_models(
+        game_model: GameModel,
+        room_gs: RoomGS,
+        session: AsyncSession,
+):
+    if len(room_gs.enemies) == 0:
+        return
+    is_list = isinstance(room_gs.enemies[0], list)
+    # Получаем MobModel модели алхимии используя BaseEntityGS внутри room_gs
+    enemies: list[MobModel | list[MobModel]] = await mob_creator.form_enemies(room_gs, is_list)
+    # Добавляем их в базу данных, и оставляем ссылки на них по id в player_char
+    await _append_enemies(
+        room_gs=room_gs,
+        room_model=game_model.room,
+        enemies=enemies,
+        is_list=is_list,
+        session=session,
+    )
+    # Инициализируем в mob_model все, где требуется mob_model.id
+    await mob_initer.init_entity(
+        room_gs=room_gs,
+        enemies=enemies,
+        is_list=is_list,
+    )
 
 
 async def _append_enemies(
         room_gs: RoomGS,
         room_model: RoomModel,
         enemies: list[MobModel | list[MobModel]],
+        is_list: bool,
         session: AsyncSession
 ):
-    if len(enemies) == 0:
-        return
-
-    is_list = isinstance(enemies[0], list)
 
     if is_list:
         for enemy_list in enemies:
@@ -140,41 +154,5 @@ async def _append_enemies(
 
     room_model.enemies = enemies_id
 
-    await _init_effects_on_entities(
-        room_gs=room_gs,
-        room_model=room_model,
-        enemies=enemies,
-        is_list=is_list,
-    )
-
     await session.commit()
 
-
-async def _init_effects_on_entities(
-        room_gs: RoomGS,
-        room_model: RoomModel,
-        enemies: list[MobModel | list[MobModel]],
-        is_list: bool,
-):
-    if is_list:
-        for model_list, game_schema_list in zip( enemies, room_gs.enemies ):
-            for mob_model, entity_gs in zip( model_list, game_schema_list ):
-                await _init_effect_on_entity(mob_model, entity_gs)
-
-    else:
-        for mob_model, entity_gs in zip( enemies, room_gs.enemies ):
-            await _init_effect_on_entity(mob_model, entity_gs)
-
-
-
-async def _init_effect_on_entity(
-        mob_model: MobModel,
-        entity_gs: BaseEntityGS,
-):
-    entity_gs_instance = entity_gs()
-    for effect_app in entity_gs_instance.effects:
-        await entity_effects.add_effect(
-            entity=mob_model,
-            caster_id=mob_model.id,
-            effect_app=effect_app,
-        )

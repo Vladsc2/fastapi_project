@@ -3,7 +3,7 @@ from game_data.raids_data.goblin_forest.entities import BaseGoblin as Enemy
 from dataclasses import dataclass, field
 
 @dataclass
-class OneBaseGoblinRoom( BattleRoom ):
+class TestBattleRoom( BattleRoom ):
     name = "Тестовая комната битвы"
 
     texts: list = field(default_factory=lambda: [

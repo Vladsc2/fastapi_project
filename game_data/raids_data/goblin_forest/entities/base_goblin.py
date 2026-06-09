@@ -21,7 +21,7 @@ class BaseGoblin( BaseEntityGS ):
 
 
     exp = 1
-    loot: list = field(default_factory=[
+    loot: list = field(default_factory=lambda: [
         DropSpec(
             url="item/junk/board",
             quantity=1,

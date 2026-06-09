@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from tools.math import rand_tools
 
 @dataclass
 class DropSpec():
@@ -11,6 +12,24 @@ class DropSpec():
     # Если False:
     #    Определить выпадение всех предметов разом (то есть с шансом `chance` выпадет либо `quantity` предметов, либо 0)
     single_mode: bool = False
+
+
+    def execute(self) -> list:
+        loot = []
+
+        if self.single_mode:
+            for _ in range(self.quantity):
+                flag = rand_tools.is_taken( self.chance )
+                if flag:
+                    loot.append( self.url )
+
+        else:
+            flag = rand_tools.is_taken( self.chance )
+            if flag:
+                for _ in range(self.quantity):
+                    loot.append( self.url )
+
+        return loot
 
 
 
