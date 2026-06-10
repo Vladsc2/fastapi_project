@@ -8,3 +8,5 @@ class BrokenArrow( JunkItem ):
 
     sell_price = 1
     buy_price = 5
+
+    stack_limit = 20

@@ -2,7 +2,9 @@ from app.models.game import MobModel
 from game_data.templates.entity import BaseEntityGS, DropSpec
 from game_data.templates.room import RoomGS
 from random import randint
-from app.game_systems.character import entity_script
+from app.schemas.slot import ItemSlot
+from game_data.items import items_system
+from app.game_systems.slot import slot_operations
 
 
 async def form_enemies(room_instance: RoomGS, is_list: bool) -> list[MobModel | list[MobModel]]:
@@ -72,11 +74,17 @@ async def _form_mob_model(entity_gs_cls: type[BaseEntityGS]) -> MobModel:
 
 
 async def _define_loot(mob_model: MobModel, entity_gs: BaseEntityGS):
-    loot = []
+    loot: list[ItemSlot] = []
 
     for drop_spec in entity_gs.loot:
-        loot += drop_spec.execute()
+        slot: ItemSlot = drop_spec.execute()
 
-    mob_model.loot = loot
+        await slot_operations.add_slot_to_slot_list(
+            slot_list=loot,
+            slot=slot,
+        )
+
+
+    mob_model.loot = [loot_slot.model_dump() for loot_slot in loot]
 
 

@@ -1,8 +1,34 @@
 from dataclasses import dataclass, field
 from tools.math import rand_tools
+from app.schemas.slot import ItemSlot
+from game_data.items import items_system
 
 @dataclass
 class DropSpec():
+
+    def execute(self) -> ItemSlot:
+        item = items_system.get_item_by_url(self.url)
+        if item is None:
+            print(f"Не удалось получить item по url '{url}'\n\n"
+                      f" - {__file__}")
+            return ItemSlot( url=self.url, name=self.url, count=0, stack_limit=0 )
+
+        slot = ItemSlot(url=self.url, name=item.name, count=0, stack_limit=item.stack_limit)
+
+        if self.single_mode:
+            for _ in range(self.quantity):
+                flag = rand_tools.is_taken( self.chance )
+                if flag:
+                    slot.count += 1
+
+        else:
+            flag = rand_tools.is_taken( self.chance )
+            if flag:
+                slot.count = self.quantity
+
+        return slot
+
+
     url: str
     quantity: int
     chance: float
@@ -12,24 +38,6 @@ class DropSpec():
     # Если False:
     #    Определить выпадение всех предметов разом (то есть с шансом `chance` выпадет либо `quantity` предметов, либо 0)
     single_mode: bool = False
-
-
-    def execute(self) -> list:
-        loot = []
-
-        if self.single_mode:
-            for _ in range(self.quantity):
-                flag = rand_tools.is_taken( self.chance )
-                if flag:
-                    loot.append( self.url )
-
-        else:
-            flag = rand_tools.is_taken( self.chance )
-            if flag:
-                for _ in range(self.quantity):
-                    loot.append( self.url )
-
-        return loot
 
 
 

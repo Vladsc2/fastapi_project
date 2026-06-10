@@ -11,6 +11,8 @@ class BaseItem():
     name: str = "Item"
     desc: str = ""
 
+    stack_limit: int = 1
+
     sell_price: int = 1
     buy_price: int = 5
 
@@ -25,6 +27,7 @@ class JunkItem(BaseItem):
 
 class CoinItem(BaseItem):
     _category = BaseItem._category + "/coin"
+    stack_limit = 60
     can_be_sold = False
 
 

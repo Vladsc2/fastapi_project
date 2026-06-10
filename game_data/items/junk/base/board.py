@@ -8,3 +8,5 @@ class Board( JunkItem ):
 
     sell_price = 2
     buy_price = 5
+
+    stack_limit = 10

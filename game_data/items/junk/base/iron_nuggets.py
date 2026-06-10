@@ -8,3 +8,5 @@ class IronNuggets( JunkItem ):
 
     sell_price = 10
     buy_price = 30
+
+    stack_limit = 15

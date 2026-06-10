@@ -5,4 +5,3 @@ class CopperCoin( CoinItem ):
 
     name = "Медная монета"
     desc = "Самая мелкая по номиналу валюта Империи"
-
