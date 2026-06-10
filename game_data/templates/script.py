@@ -1,39 +1,41 @@
-
+from app.models.game import MobModel
+from game_data import const
 
 class BaseScript():
     _category = "script"
 
-    _meta = {}
+    _meta: dict
 
-    META_PLAYER_CHAR = 0
-    META_ENTITY = 1
-    META_ATTACKER = 2
-    META_DAMAGE = 3
-    META_GAME_MODEL = 4
-    META_ROOM_MODEL = 5
-
-    id: str
-
-    def _form_meta(self, game_model, room_model, player_char, entity, attacker, damage):
+    def _form_script_meta(self, game_model, owner, enemies):
         self._meta = {
-            self.META_GAME_MODEL: game_model,
-            self.META_ROOM_MODEL: room_model,
-            self.META_PLAYER_CHAR: player_char,
-            self.META_ENTITY: entity,
-            self.META_ATTACKER: attacker,
-            self.META_DAMAGE: damage,
+            self.Meta.GAME_MODEL: game_model,
+            self.Meta.ROOM_MODEL: game_model.room,
+            self.Meta.PLAYER_CHAR: game_model.character,
+            self.Meta.OWNER: owner,
+            self.Meta.ENEMIES: enemies,
+            self.Meta.IS_MOB: isinstance(owner, MobModel),
         }
 
 
-    def get_meta(self, const: int):
-        return self._meta.get(const)
+    def meta(self, meta_const: int, default=None):
+        return self._meta.get(meta_const, default)
 
 
-    def death_trigger(self):
-        pass
+    class Meta:
+        GAME_MODEL = 0
+        ROOM_MODEL = 1
+        PLAYER_CHAR = 2
+        OWNER = 3
+        ENEMIES = 5
+        IS_MOB = 6
 
 
-    def close_battle_trigger(self):
+    # override
+    id: str
+    trigger: str = const.NONE_CONST
+    only_one: bool = True
+
+    async def run(self):
         pass
 
 

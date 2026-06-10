@@ -1,5 +1,6 @@
 from app.models.base import BaseModel, BaseIdModel
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy import String, ForeignKey, JSON
 from typing import TYPE_CHECKING
 
@@ -39,8 +40,8 @@ class BaseCharacterModel( BaseIdModel ):
 
     current_initiative: Mapped[int] = mapped_column(default=0)
 
-    effects: Mapped[list] = mapped_column(JSON, default=list)
-    scripts: Mapped[list] = mapped_column(JSON, default=list)
+    effects: Mapped[list] = mapped_column(MutableList.as_mutable(JSON), default=list)
+    scripts: Mapped[list] = mapped_column(MutableList.as_mutable(JSON), default=list)
 
 
 

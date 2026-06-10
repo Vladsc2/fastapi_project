@@ -185,7 +185,7 @@ async def _hitting_roll_awaiting(
         target=enemy,
         roll_value=roll_value,
         armor=armor,
-        weapon=weapon
+        weapon=weapon,
     )
 
     if not is_hit:
@@ -237,6 +237,7 @@ async def _damage_roll_awaiting(
         target=enemy,
         weapon=weapon,
         roll_dict=roll_dict,
+        enemies=enemies,
     )
 
     room_model.stoppers = []

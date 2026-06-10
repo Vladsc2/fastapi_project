@@ -10,6 +10,8 @@ from app.game_systems.battle.mob import preparing
 from app.game_systems.battle.battle_starter import battle_starter_text
 from app.game_systems.roll import clear_roll, get_roll
 
+from app.game_systems.character.stat import get_stat_modifier
+
 from app.game_systems.battle.round_manager import round_manager
 
 
@@ -60,7 +62,8 @@ async def _check_player_initiative(
     if initiative is None:
         return battle_starter_text.get_text_start(enemies)
 
-    game_model.character.current_initiative = initiative
+    modifier = get_stat_modifier(game_model.character, const.Stat.Dexterity)
+    game_model.character.current_initiative = initiative + modifier
 
     await round_manager.start_round(
         game_model=game_model,

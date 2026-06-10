@@ -1,17 +1,19 @@
 from app.models.game import GameModel
 from app.models.game import BaseCharacterModel, MainCharacterModel, MobModel
 from game_data.templates.damage_formula import Damage
+from game_data import const
 
 from game_data.const import const_modifier
-from game_data.scripts import scripts_system
+from app.game_systems.character import entity_script
 
 from app.game_systems.battle.round_manager import battle_win
 
-def entity_take_damage(
+async def entity_take_damage(
         game_model: GameModel,
         attacker: BaseCharacterModel | None,
         target: MobModel,
         damage: Damage,
+        enemies: list[MobModel],
 ) -> str:
     text = ""
 
@@ -29,38 +31,17 @@ def entity_take_damage(
     if target.hp == 0:
         text += f"{target.name} умер\n\n"
 
-        _scripts_death_trigger(
+        await entity_script.execute_script_by_trigger(
             game_model=game_model,
-            attacker=attacker,
-            entity=target,
-            damage=damage
+            owner=target,
+            enemies=enemies,
+            trigger=const.Trigger.DEATH,
         )
 
         battle_win.check_battle_win(
             room_model=game_model.room,
+            enemies=enemies,
         )
 
 
     return text
-
-
-
-def _scripts_death_trigger(
-        game_model: GameModel,
-        attacker: BaseCharacterModel | None,
-        entity: BaseCharacterModel,
-        damage: Damage,
-):
-
-    for script_url in entity.scripts:
-        script_cls = scripts_system.get_script_by_url(script_url)
-        script = script_cls()
-        script._form_meta(
-            game_model=game_model,
-            room_model=game_model.room,
-            player_char=game_model.character,
-            entity=entity,
-            attacker=attacker,
-            damage=damage,
-        )
-        script.death_trigger()

@@ -25,12 +25,12 @@ class BaseGoblin( BaseEntityGS ):
         DropSpec(
             url="item/junk/board",
             quantity=1,
-            chance=35,
+            chance=45,
         ),
         DropSpec(
             url="item/junk/broken_arrow",
             quantity=2,
-            chance=20,
+            chance=28,
             single_mode=True,
         ),
         DropSpec(
@@ -42,5 +42,6 @@ class BaseGoblin( BaseEntityGS ):
             url="item/coin/copper",
             quantity=10,
             chance=25,
+            single_mode=True,
         )
     ])

@@ -31,6 +31,7 @@ class BaseEffect():
             player_char,
             caster,
             target,
+            enemies,
             value_1,
             value_2,
             value_3,
@@ -42,6 +43,8 @@ class BaseEffect():
             self.Meta.PLAYER_CHAR: player_char,
             self.Meta.CASTER: caster,
             self.Meta.TARGET: target,
+            self.Meta.ENEMIES: enemies,
+
             self.Meta.VALUE_1: value_1,
             self.Meta.VALUE_2: value_2,
             self.Meta.VALUE_3: value_3,
@@ -72,11 +75,12 @@ class BaseEffect():
         PLAYER_CHAR = 2
         CASTER = 3
         TARGET = 4
+        ENEMIES = 5
 
-        VALUE_1 = 5
-        VALUE_2 = 6
-        VALUE_3 = 7
-        VALUE_4 = 8
+        VALUE_1 = 6
+        VALUE_2 = 7
+        VALUE_3 = 8
+        VALUE_4 = 9
 
 
     # interface

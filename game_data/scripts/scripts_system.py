@@ -3,6 +3,8 @@ import game_data.scripts.enemy_scripts
 import game_data.scripts.player_scripts
 import game_data.scripts.system_scripts
 
+from app.models.game import GameModel, BaseCharacterModel, MobModel
+
 _scripts = {}
 
 
@@ -25,3 +27,6 @@ def get_script_by_url(
 
 
 _register_all_scripts()
+
+
+

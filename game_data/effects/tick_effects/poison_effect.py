@@ -21,7 +21,7 @@ class Poison( TickEffect ):
 
 
 
-    def tick(self) -> str:
+    async def tick(self) -> str:
         game_model: GameModel = self.meta( self.Meta.GAME_MODEL )
         target: BaseCharacterModel = self.meta( self.Meta.TARGET )
 
@@ -32,11 +32,12 @@ class Poison( TickEffect ):
         damage = Damage(damage_type=const.DamageType.Exotic.POISON, value=value)
 
         if isinstance(target, MobModel):
-            text += entity_health.entity_take_damage(
+            text += await entity_health.entity_take_damage(
                 game_model=game_model,
                 attacker=None,
                 target=target,
-                damage=damage
+                damage=damage,
+                enemies=self.meta(self.Meta.ENEMIES),
             )
 
         return text

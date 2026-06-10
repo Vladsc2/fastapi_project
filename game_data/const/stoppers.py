@@ -12,6 +12,8 @@ class Stopper:
         AWAIT_HIT_ROLL_RANGE_ATTACK = "Await hit roll range attack"
         AWAIT_DAMAGE_ROLL_RANGE_ATTACK = "Await damage roll range attack"
 
+        AWAIT_SELECT_ENEMY_TO_LOOT = "Await select enemy to loot"
+
         ENEMY_POINTER_1 = "Enemy pointer 1"
         ENEMY_POINTER_2 = "Enemy pointer 2"
         ENEMY_POINTER_3 = "Enemy pointer 3"

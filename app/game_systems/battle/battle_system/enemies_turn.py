@@ -61,6 +61,7 @@ async def _enemies_before_player(
             game_model=game_model,
             room_model=room_model,
             mob_model=mob_model,
+            enemies=enemies,
         )
 
     await round_manager.start_player_turn_actions(
@@ -86,6 +87,7 @@ async def _enemies_after_player(
             game_model=game_model,
             room_model=room_model,
             mob_model=mob_model,
+            enemies=enemies,
         )
 
     await round_manager.start_round(
@@ -104,12 +106,14 @@ async def _entity_action(
         game_model: GameModel,
         room_model: RoomModel,
         mob_model: MobModel,
+        enemies: list[MobModel],
 ):
     text = ""
     text += await entity_effects.apply_effects_on_entity(
         game_model=game_model,
         entity=mob_model,
         event=const.Event.START_TURN,
+        enemies=enemies,
     )
     text += await entity_action.do_entity_action(
         mob_model=mob_model
@@ -118,6 +122,7 @@ async def _entity_action(
         game_model=game_model,
         entity=mob_model,
         event=const.Event.END_TURN,
+        enemies=enemies,
     )
 
     return text

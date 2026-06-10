@@ -1,5 +1,5 @@
 from app.models import GameModel
-from app.models.game import BaseCharacterModel, MainCharacterModel
+from app.models.game import BaseCharacterModel, MainCharacterModel, MobModel
 from game_data.templates.items import WeaponItem, ArmorItem
 
 from game_data import const
@@ -61,6 +61,7 @@ async def attack_damage(
         target: BaseCharacterModel,
         weapon: WeaponItem,
         roll_dict: dict[str, list[int]],
+        enemies: list[MobModel]
 ) -> str:
     text = ""
 
@@ -73,14 +74,15 @@ async def attack_damage(
 
         damage.value += modifier
 
-        text += entity_health.entity_take_damage(
+        text += await entity_health.entity_take_damage(
             game_model=game_model,
             attacker=attacker,
             target=target,
-            damage=damage
+            damage=damage,
+            enemies=enemies,
         )
 
-    if not hasattr(target, "_delete_label"):
+    if target.hp > 0:
         for effect_app in weapon.effects:
             caster_id = None if isinstance(attacker, MainCharacterModel) else attacker.id
             text += await entity_effects.add_effect(target, caster_id, effect_app)

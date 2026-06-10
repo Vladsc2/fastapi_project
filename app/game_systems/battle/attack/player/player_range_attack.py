@@ -238,6 +238,7 @@ async def _damage_roll_awaiting(
         target=enemy,
         weapon=weapon,
         roll_dict=roll_dict,
+        enemies=enemies,
     )
 
     room_model.stoppers = []

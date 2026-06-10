@@ -24,8 +24,13 @@ async def get_effects(entity: BaseCharacterModel) -> list[EffectSchema]:
 
 
 
-async def apply_effects_on_entity(game_model: GameModel, entity: MobModel, event: str) -> str:
-    return await _apply_effects_on_entity(game_model, entity, event)
+async def apply_effects_on_entity(
+        game_model: GameModel,
+        entity: MobModel,
+        event: str,
+        enemies: list[MobModel]
+) -> str:
+    return await _apply_effects_on_entity(game_model, entity, event, enemies)
 
 
 
@@ -162,7 +167,12 @@ async def _check_save_throw(
 
 
 
-async def _apply_effects_on_entity(game_model: GameModel, entity: MobModel, event: str) -> str:
+async def _apply_effects_on_entity(
+        game_model: GameModel,
+        entity: MobModel,
+        event: str,
+        enemies: list[MobModel]
+) -> str:
     effects = await _get_effects(entity)
     text = ""
     for effect_schema in effects[:]:
@@ -182,12 +192,13 @@ async def _apply_effects_on_entity(game_model: GameModel, entity: MobModel, even
             target=entity,
             game_model=game_model,
             effect_schema=effect_schema,
+            enemies=enemies,
         )
 
         # Применяем эффект
         if effect_schema.effect_type == BaseEffect.Type.TICK_EFFECT:
             effect: TickEffect
-            text += effect.tick()
+            text += await effect.tick()
 
         # Обновляем таймер
         if effect_schema.times != -1:

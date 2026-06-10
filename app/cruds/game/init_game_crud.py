@@ -14,6 +14,8 @@ from app.models.raid import RaidModel, MetaModel
 from app.models.room import RoomModel
 from app.models.game import RollModel
 
+from app.game_systems.character import entity_script
+
 
 
 """
@@ -201,6 +203,12 @@ async def _create_character(
 
     session.add( main_character )
     await session.commit()
+
+    await entity_script.add_script_to_entity(
+        entity=main_character,
+        url="script/player/remove_enemies_db"
+    )
+
     return main_character
 
 

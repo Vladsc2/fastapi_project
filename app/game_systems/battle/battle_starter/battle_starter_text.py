@@ -37,10 +37,11 @@ def _get_enemies_text(enemies: list[MobModel]) -> str:
     text = "Определение инициативы. Инициатива = d20 + модификатор ловкости\n\n"
     for mob_model in enemies:
         modifier = get_stat_modifier(mob_model, const.Stat.Dexterity)
-        text += (f"  {mob_model.name} бросает на инициативу\n"
-                 f"    Выпадает {mob_model.current_initiative - modifier}\n"
-                 f"    Модификатор ловкости {modifier}\n"
-                 f"    Инициатива: {mob_model.current_initiative}\n")
+        text += f"  {mob_model.name} бросает на инициативу\n"
+        text += f"    Выпадает {mob_model.current_initiative - modifier}\n"
+        if modifier != 0:
+            text += f"    Модификатор ловкости {modifier}\n"
+            text += f"    Инициатива: {mob_model.current_initiative}\n"
     text += "\n"
     return text
 
@@ -54,7 +55,8 @@ def _initiative_player_text(game_model: GameModel, initiative: int) -> str:
     text = f"\n  {char.name} бросает на инициативу\n"
     modifier = get_stat_modifier(char, const.Stat.Dexterity)
     text += f"    Выпадает {game_model.character.current_initiative - modifier}\n"
-    text += f"    Модификатор ловкости {modifier}\n"
-    text += f"    Инициатива: {char.current_initiative}\n"
+    if modifier != 0:
+        text += f"    Модификатор ловкости {modifier}\n"
+        text += f"    Инициатива: {char.current_initiative}\n"
     text += "\n"
     return text

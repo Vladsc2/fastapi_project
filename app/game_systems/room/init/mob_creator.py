@@ -2,6 +2,7 @@ from app.models.game import MobModel
 from game_data.templates.entity import BaseEntityGS, DropSpec
 from game_data.templates.room import RoomGS
 from random import randint
+from app.game_systems.character import entity_script
 
 
 async def form_enemies(room_instance: RoomGS, is_list: bool) -> list[MobModel | list[MobModel]]:
@@ -39,10 +40,6 @@ async def _create_mob_model(entity_gs_cls: type[BaseEntityGS]):
     mob_model = await _form_mob_model(entity_gs_cls)
 
     await _define_loot(mob_model, entity_gs)
-
-    mob_model.scripts = [
-        "script/enemy/remove_db",
-    ]
 
     return mob_model
 

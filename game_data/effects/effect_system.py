@@ -32,6 +32,7 @@ def get_effect_instance(
         target: BaseCharacterModel,
         game_model: GameModel,
         effect_schema: EffectSchema,
+        enemies: list[MobModel],
 ) -> BaseEffect | None:
     effect_cls = _effects.get( url, None )
     if effect_cls is None:
@@ -40,6 +41,7 @@ def get_effect_instance(
         effect_cls=effect_cls,
         caster=caster,
         target=target,
+        enemies=enemies,
         game_model=game_model,
         effect_schema=effect_schema,
     )
@@ -51,6 +53,7 @@ def _form_effect_instance(
         target: BaseCharacterModel,
         game_model: GameModel,
         effect_schema: EffectSchema,
+        enemies: list[MobModel]
 ) -> BaseEffect:
     effect = effect_cls()
     effect._form_effect_meta(
@@ -59,6 +62,8 @@ def _form_effect_instance(
         player_char=game_model.character,
         caster=caster,
         target=target,
+        enemies=enemies,
+
         value_1=effect_schema.value_1,
         value_2=effect_schema.value_2,
         value_3=effect_schema.value_3,

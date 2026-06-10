@@ -6,11 +6,13 @@ def get_state_value( room_model: RoomModel, state: str ) -> int:
     return room_model.updated_states.get(state, 1)
 
 
-def increase_state_value( room_model: RoomModel, update_state: str, next_state: str, stoppers: list | None = None ):
+def increase_state_value( room_model: RoomModel, update_state: str, next_state: str, stoppers: list | str | None = None ):
     room_model.state = next_state
     if stoppers is None:
         room_model.stoppers = []
     else:
+        if isinstance(stoppers, str):
+            stoppers = [stoppers]
         room_model.stoppers = stoppers
 
     value = get_state_value(room_model, update_state)
@@ -18,7 +20,7 @@ def increase_state_value( room_model: RoomModel, update_state: str, next_state: 
 
 
 
-def increase_current_state( room_model: RoomModel, next_state: str, stoppers: list | None = None ):
+def increase_current_state( room_model: RoomModel, next_state: str, stoppers: list | str | None = None ):
     increase_state_value(
         room_model=room_model,
         update_state=room_model.state,
